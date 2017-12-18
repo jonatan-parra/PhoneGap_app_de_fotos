@@ -1,16 +1,23 @@
 var app={
   inicio: function(){
     this.iniciaFastClick();
-    this.iniciaBoton();
+    this.iniciaBotones();
   },
 
   iniciaFastClick: function () {
     FastClick.attach(document.body);
   },
 
-  iniciaBoton: function () {
+  iniciaBotones: function () {
     var buttonAction = document.querySelector('#button-action');
-    buttonAction.addEventListener('click', this.tomarFoto);
+    buttonAction.addEventListener('click', function(){
+      app.cargarFoto(Camera.PictureSourceType.CAMERA);
+    });
+
+    var buttonGallery = document.querySelector('#button-gallery');
+    buttonGallery.addEventListener('click', function(){
+      app.cargarFoto(Camera.PictureSourceType.PHOTOLIBRARY);
+    });
 
     var filterButtons = document.querySelectorAll('.button-filter');
     filterButtons[0].addEventListener('click', function(){
@@ -26,18 +33,20 @@ var app={
     });
   },
 
-  tomarFoto: function(){
-    var opciones = {
-      quality:90, // Valor entre 0 y 100%
-      destinationType: Camera.DestinationType.FILE_URI,
-      targetWidth: 300,
-      targetHeight: 300,
-      correctOrientation: true
-    };
-    navigator.camera.getPicture(app.fotoTomada, app.errorAlTomarFoto, opciones);
+
+    cargarFoto: function(pictureSourceType){
+      var opciones = {
+        quality: 90, // valor entre 0 y 100
+        sourceType: pictureSourceType,
+        destinationType: Camera.DestinationType.FILE_URI,
+        targetWidth: 300,
+        targetHeight: 300,
+        correctOrientation: true
+      };
+      navigator.camera.getPicture(app.fotoCargada, app.errorAlCargarFoto, opciones);
   },
 
-  fotoTomada: function(imageURI){
+  fotoCargada: function(imageURI){
     var img = document.createElement('img');
     img.onload = function(){
       app.pintarFoto(img);
